@@ -1,0 +1,9 @@
+trying-into-opengl
+
+.cache/
+.clang-tidy
+*.o
+*.d
+
+compile_commands.json
+*.sublime-*
