@@ -84,8 +84,9 @@ int main(void) {
     };
 
     GLuint indices[] = {
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
+        // 0, 1, 3,   // first triangle
+        // 1, 2, 3    // second triangle
+        0, 1, 1, 2, 2, 3, 3, 0
     };
 
     GLuint VAO;
@@ -142,7 +143,9 @@ int main(void) {
         // glUseProgram(shaderProgram);
         // glBindVertexArray(VAO);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
 
         // Swap the screen buffers
         glfwSwapBuffers(window);
