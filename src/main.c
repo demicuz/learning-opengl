@@ -70,6 +70,23 @@ int main(void) {
     glViewport(0, 0, WIDTH, HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    // TODO does this do anything?
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
     float vertices[] = {
         -0.5F, -0.5F, 0.0F,
          0.5F, -0.5F, 0.0F,
@@ -91,8 +108,10 @@ int main(void) {
 
     GLuint VAO;
     GLuint VBO;
+    GLuint EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
 
@@ -100,28 +119,8 @@ int main(void) {
     // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
 
-    GLuint EBO;
-    glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    // TODO does this do anything?
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
 
     // TODO where do I put these?
     // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
@@ -131,7 +130,10 @@ int main(void) {
 
     // TODO should I also do this in the render loop?
     glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
+    // glBindVertexArray(VAO);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glLineWidth(10.0F);
 
     while (!glfwWindowShouldClose(window))
     {
