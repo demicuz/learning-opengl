@@ -6,7 +6,7 @@ SRC			:= $(wildcard $(SRC_DIR)/*.c $(SRC_DIR)/*/*.c)
 OBJ			:= $(SRC:.c=.o)
 
 # TODO set correct flags
-CC			:= gcc
+CC			:= gcc -fdiagnostics-color=always
 CPPFLAGS	:= -I include -MMD -MP
 CFLAGS		:= -std=c11 -pedantic -O1 -g -Wall#-Wextra#-Werror
 LDFLAGS		:=
