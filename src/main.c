@@ -8,9 +8,10 @@
 
 const char *vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
+"uniform mat4 MVP;\n"
 "void main()\n"
 "{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"   gl_Position = MVP * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 "}\0"; // TODO aren't they null-terminated by default?
 
 const char *fragmentShaderSource = "#version 330 core\n"
@@ -128,8 +129,17 @@ int main(void) {
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(posAttrib);
 
-    // TODO should I also do this in the render loop?
     glUseProgram(shaderProgram);
+
+    GLfloat mvp[16] = {0.0F};
+    mvp[0] = 1.0F;
+    mvp[5] = 1.0F;
+    mvp[10] = 1.0F;
+    mvp[15] = 1.0F;
+    GLint matrixID = glGetUniformLocation(shaderProgram, "MVP");
+    glUniformMatrix4fv(matrixID, 1, GL_FALSE, mvp);
+
+    // TODO should I also do this in the render loop?
     // glBindVertexArray(VAO);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
