@@ -10,7 +10,7 @@ CC			:= gcc -fdiagnostics-color=always
 CPPFLAGS	:= -I include -MMD -MP
 CFLAGS		:= -std=c11 -pedantic -O1 -g -Wall#-Wextra#-Werror
 LDFLAGS		:=
-LDLIBS		:= -lglfw -lGL
+LDLIBS		:= -lglfw -lGL -lm
 
 .PHONY: all bonus clean fclean re
 

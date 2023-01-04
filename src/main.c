@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include <trying-into-opengl.h>
+#include <vector.h>
 
 const char *vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -88,23 +89,26 @@ int main(void) {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    float vertices[] = {
-        -0.5F, -0.5F, 0.0F,
-         0.5F, -0.5F, 0.0F,
-         0.0F,  0.5F, 0.0F
-    };
-
-    float quad_vertices[] = {
-         0.5F,  0.5F, 0.0F,  // top right
-         0.5F, -0.5F, 0.0F,  // bottom right
-        -0.5F, -0.5F, 0.0F,  // bottom left
-        -0.5F,  0.5F, 0.0F   // top left
+    GLfloat cube_vertices[] = {
+        // front face
+         0.3f,  0.3f, -1.3f,  // 0 top right
+         0.3f, -0.3f, -1.3f,  // 1 bottom right
+        -0.3f, -0.3f, -1.3f,  // 2 bottom left
+        -0.3f,  0.3f, -1.3f,  // 3 top left
+        // back face
+         0.3f,  0.3f,  -1.9f, // 4 top right
+         0.3f, -0.3f,  -1.9f, // 5 bottom right
+        -0.3f, -0.3f,  -1.9f, // 6 bottom left
+        -0.3f,  0.3f,  -1.9f  // 7 top left
     };
 
     GLuint indices[] = {
-        // 0, 1, 3,   // first triangle
-        // 1, 2, 3    // second triangle
-        0, 1, 1, 2, 2, 3, 3, 0
+        0, 1, 1, 2, 2, 3, 3, 0, // front face
+        4, 5, 5, 6, 6, 7, 7, 4, // back face
+        2, 3, 3, 7, 7, 6, 6, 2, // left face
+        0, 1, 1, 5, 5, 4, 4, 0, // right face
+        0, 4, 4, 7, 7, 3, 3, 0, // top face
+        1, 5, 5, 6, 6, 2, 2, 1, // bottom face
     };
 
     GLuint VAO;
@@ -117,8 +121,7 @@ int main(void) {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -131,24 +134,27 @@ int main(void) {
 
     glUseProgram(shaderProgram);
 
-    GLfloat mvp[16] = {0.0F};
-    mvp[0] = 1.0F;
-    mvp[5] = 1.0F;
-    mvp[10] = 1.0F;
-    mvp[15] = 1.0F;
+    t_mat4 mvp = {{0.0f}};
+    mvp.x1 = 1.0f;
+    // mvp.x2 = 1.0f;
+    mvp.y2 = 1.0f;
+    mvp.z3 = 1.0f;
+    mvp.w4 = 1.0f;
+    mat4_perspective(40.0f, ASPECT, 1e-5f, 1e5f, &mvp);
+
     GLint matrixID = glGetUniformLocation(shaderProgram, "MVP");
-    glUniformMatrix4fv(matrixID, 1, GL_FALSE, mvp);
+    glUniformMatrix4fv(matrixID, 1, GL_FALSE, mvp.raw);
 
     // TODO should I also do this in the render loop?
     // glBindVertexArray(VAO);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glLineWidth(10.0F);
+    glLineWidth(10.0f);
 
     while (!glfwWindowShouldClose(window))
     {
         // Clear the colorbuffer
-        glClearColor(0.2F, 0.3F, 0.3F, 1.0F);
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Render
@@ -157,7 +163,8 @@ int main(void) {
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_LINES, sizeof indices / sizeof (GLuint), GL_UNSIGNED_INT, 0);
+        // glMultiDrawElements(GL_LINE_LOOP, cube_counts, GL_UNSIGNED_INT, (const void **) cube_indices, sizeof cube_counts / sizeof (GLsizei));
 
         // Swap the screen buffers
         glfwSwapBuffers(window);

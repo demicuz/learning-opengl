@@ -2,5 +2,6 @@
 #define TRYING_INTO_OPENGL_H
 
 const int WIDTH = 800, HEIGHT = 600;
+const float ASPECT = (float) WIDTH / (float) HEIGHT;
 
 #endif
