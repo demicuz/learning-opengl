@@ -140,8 +140,8 @@ int main(void) {
     t_vec3 translation = vec3(0, 0, -1);
     mat4_translate(&model, &translation, NULL);
 
-    t_vec3 axis = vec3(0, 1, 0);
-    mat4_rotate(&model, 0.2f, &axis, NULL);
+    t_vec3 y_axis = vec3(0, 1, 0);
+    mat4_rotate(&model, 0.2f, &y_axis, NULL);
 
     t_vec3 scale = vec3(0.5f, 0.5f, 0.5f);
     mat4_scale(&model, &scale, NULL);
@@ -173,6 +173,9 @@ int main(void) {
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+        mat4_rotate(&mvp, 0.02f, &y_axis, NULL);
+        glUniformMatrix4fv(matrixID, 1, GL_FALSE, mvp.raw);
+
         glDrawElements(GL_LINES, sizeof indices / sizeof (GLuint), GL_UNSIGNED_INT, 0);
         // glMultiDrawElements(GL_LINE_LOOP, cube_counts, GL_UNSIGNED_INT, (const void **) cube_indices, sizeof cube_counts / sizeof (GLsizei));
 
@@ -180,8 +183,8 @@ int main(void) {
         glfwSwapBuffers(window);
 
         // Check if any events have been activated (key pressed, mouse moved etc.) and call corresponding response functions
-        // glfwPollEvents();
-        glfwWaitEvents();
+        glfwPollEvents();
+        // glfwWaitEvents();
     }
 
     glDeleteVertexArrays(1, &VAO);
