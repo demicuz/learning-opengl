@@ -104,9 +104,9 @@ t_mat4 *mat4_scale(t_mat4 *mat, t_vec3 *vec, t_mat4 *dest) {
     return dest;
 }
 
+// axis is a normalized vector
 t_mat4 *mat4_rotate(t_mat4 *mat, float angle, t_vec3 *axis, t_mat4 *dest) {
     float x = axis->raw[0], y = axis->raw[1], z = axis->raw[2],
-        len = sqrtf(x * x + y * y + z * z),
         s, c, t,
         a00, a01, a02, a03,
         a10, a11, a12, a13,
@@ -115,12 +115,8 @@ t_mat4 *mat4_rotate(t_mat4 *mat, float angle, t_vec3 *axis, t_mat4 *dest) {
         b10, b11, b12,
         b20, b21, b22;
 
-    if (!len) { return NULL; }
-    if (len != 1) {
-        len = 1 / len;
-        x *= len;
-        y *= len;
-        z *= len;
+    if (x == 0 && y == 0 && z == 0) {
+        return NULL;
     }
 
     s = sinf(angle);
