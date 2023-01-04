@@ -12,7 +12,7 @@ const char *vertexShaderSource = "#version 330 core\n"
 "uniform mat4 MVP;\n"
 "void main()\n"
 "{\n"
-"   gl_Position = MVP * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"   gl_Position = MVP * vec4(aPos, 1.0);\n"
 "}\0"; // TODO aren't they null-terminated by default?
 
 const char *fragmentShaderSource = "#version 330 core\n"
