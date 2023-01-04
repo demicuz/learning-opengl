@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include <trying-into-opengl.h>
+#include <gl-wrapper.h>
 #include <vector.h>
 
 const char *vertexShaderSource = "#version 330 core\n"
@@ -52,11 +53,6 @@ int main(void) {
     }
     glfwMakeContextCurrent(window);
 
-    // if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    // {
-    //     fprintf(stderr, "%s\n", "Failed to initialize GLAD");
-    //     return -1;
-    // }
     glfwSetKeyCallback(window, key_callback);
 
     int version = gladLoadGL(glfwGetProcAddress);
@@ -72,22 +68,14 @@ int main(void) {
     glViewport(0, 0, WIDTH, HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
+    GLuint vertexShader;
+    compile_shader_source(vertexShaderSource, GL_VERTEX_SHADER, &vertexShader);
 
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
+    GLuint fragmentShader;
+    compile_shader_source(fragmentShaderSource, GL_FRAGMENT_SHADER, &fragmentShader);
 
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    // TODO does this do anything?
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    GLuint shaderProgram;
+    link_program(vertexShader, fragmentShader, &shaderProgram);
 
     GLfloat cube_vertices[] = {
         // front face
