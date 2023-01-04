@@ -91,17 +91,18 @@ int main(void) {
 
     GLfloat cube_vertices[] = {
         // front face
-         0.3f,  0.3f, -1.3f,  // 0 top right
-         0.3f, -0.3f, -1.3f,  // 1 bottom right
-        -0.3f, -0.3f, -1.3f,  // 2 bottom left
-        -0.3f,  0.3f, -1.3f,  // 3 top left
+         0.3f,  0.3f, -0.3f,  // 0 top right
+         0.3f, -0.3f, -0.3f,  // 1 bottom right
+        -0.3f, -0.3f, -0.3f,  // 2 bottom left
+        -0.3f,  0.3f, -0.3f,  // 3 top left
         // back face
-         0.3f,  0.3f,  -1.9f, // 4 top right
-         0.3f, -0.3f,  -1.9f, // 5 bottom right
-        -0.3f, -0.3f,  -1.9f, // 6 bottom left
-        -0.3f,  0.3f,  -1.9f  // 7 top left
+         0.3f,  0.3f,  0.3f, // 4 top right
+         0.3f, -0.3f,  0.3f, // 5 bottom right
+        -0.3f, -0.3f,  0.3f, // 6 bottom left
+        -0.3f,  0.3f,  0.3f  // 7 top left
     };
 
+    // TODO a datastructure for non-repetitive lines
     GLuint indices[] = {
         0, 1, 1, 2, 2, 3, 3, 0, // front face
         4, 5, 5, 6, 6, 7, 7, 4, // back face
@@ -134,13 +135,22 @@ int main(void) {
 
     glUseProgram(shaderProgram);
 
-    t_mat4 mvp = {{0.0f}};
-    mvp.x1 = 1.0f;
-    // mvp.x2 = 1.0f;
-    mvp.y2 = 1.0f;
-    mvp.z3 = 1.0f;
-    mvp.w4 = 1.0f;
-    mat4_perspective(40.0f, ASPECT, 1e-5f, 1e5f, &mvp);
+    t_mat4 model = mat4_create_identity();
+
+    t_vec3 translation = vec3(0, 0, -1);
+    mat4_translate(&model, &translation, NULL);
+
+    t_vec3 axis = vec3(0, 1, 0);
+    mat4_rotate(&model, 0.2f, &axis, NULL);
+
+    t_vec3 scale = vec3(0.5f, 0.5f, 0.5f);
+    mat4_scale(&model, &scale, NULL);
+
+    t_mat4 proj = mat4_create_identity();
+    mat4_perspective(40.0f, ASPECT, 0.1f, 1e5f, &proj);
+
+    t_mat4 mvp;
+    mat4_multiply(&proj, &model, &mvp);
 
     GLint matrixID = glGetUniformLocation(shaderProgram, "MVP");
     glUniformMatrix4fv(matrixID, 1, GL_FALSE, mvp.raw);
@@ -149,7 +159,7 @@ int main(void) {
     // glBindVertexArray(VAO);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glLineWidth(10.0f);
+    glLineWidth(3.0f);
 
     while (!glfwWindowShouldClose(window))
     {
