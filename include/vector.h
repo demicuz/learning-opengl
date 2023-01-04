@@ -49,7 +49,19 @@ typedef union
     };
 } t_mat4;
 
+// vec3
+t_vec3 vec3(float x, float y, float z);
+
+// mat4
+t_mat4 mat4_create_identity(void);
+t_mat4 *mat4_multiply(t_mat4 *mat, t_mat4 *mat2, t_mat4 *dest);
+
+t_mat4 *mat4_scale(t_mat4 *mat, t_vec3 *vec, t_mat4 *dest);
+t_mat4 *mat4_rotate(t_mat4 *mat, float angle, t_vec3 *axis, t_mat4 *dest);
+t_mat4 *mat4_translate(t_mat4 *mat, t_vec3 *vec, t_mat4 *dest);
+
 t_mat4 *mat4_perspective(float fovy, float aspect, float near, float far, t_mat4 *dest);
+t_mat4 *mat4_lookAt(t_vec3 *eye, t_vec3 *center, t_vec3 *up, t_mat4 *dest);
 
 // t_vec3   vec3(float x, float y, float z);
 // t_vec3   v_add(t_vec3 a, t_vec3 b);
